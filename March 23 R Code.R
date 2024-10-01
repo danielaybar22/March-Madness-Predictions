@@ -831,17 +831,6 @@ table(march.test.matchup.DT$winner.prune, march.test.matchup.cl)
 
 march.test.matchup.knn <- march.test.matchup.knn[,c(1:7)]
 
-
-
-# for(i in 1:8){
-  #for(j in 1:10){
-    #svm_pol <- svm(class ~., kernel = "polynomial", data = train_val, cost = c[i], degree= Degree[j], coef0 = 1)
-    #svm_pol_eval = predict(svm_pol, testing[,c(1:4)])
-    #pol_acc = confusionMatrix(svm_pol_eval, reference = testing$class)
-    #print(c(Degree[j], c[i], pol_acc$overall[1]))
-  #}
-#}
-
 c = 10^(-4:3)
 g = 10^(-3:3)
 d = c(1:10)
@@ -913,9 +902,6 @@ march.test.matchup.knn <- march.test.matchup[, c(2:8)]
 march.train.matchup.cl <- march.train.matchup$W
 march.test.matchup.cl <- march.test.matchup$W
 
-# iris.cont.nn.formula <- as.formula(paste("species ~ ", 
-                                         #paste(names(iris.cont.train[!names(iris.cont.train) %in% 'species']), 
-                                              #collapse = " + "), sep=""))
 
 
 matchup.nn.formula <- as.formula(paste("W ~ ", 
@@ -925,24 +911,13 @@ matchup.nn.formula <- as.formula(paste("W ~ ",
 
 # Build NN model with default hidden layer (1 hidden layer with 1 node)
 
-# iris.cont.model.nn1 <- neuralnet(iris.cont.nn.formula, data=iris.cont.train)
-
 matchup.model.nn1 <- neuralnet(W ~., data=march.train.matchup)
 
 # Plot the network
 
-# plot(iris.cont.model.nn1)
-
 plot(matchup.model.nn1)
 
-# Build NN model with 2 hidden layers (3 and 4 nodes)
-# Use backpropagation with 0.01 learning rate
-
-#iris.cont.model.nn2 <- neuralnet(iris.cont.nn.formula, 
-                                 #data=iris.cont.train, 
-                                 #hidden=c(3,4), 
-                                 #algorithm="backprop", 
-                                 #learningrate=0.02)
+# Build NN model with Multiple hidden layers
 
 matchup.model.nn2 <- neuralnet(W ~., data=march.train.matchup, 
                                  hidden=c(3,3),
@@ -953,21 +928,9 @@ matchup.model.nn2 <- neuralnet(W ~., data=march.train.matchup,
 
  # Plot the network
 
-#plot(iris.cont.model.nn2)
-
 plot(matchup.model.nn2)
 
 # Evaluate neural network model
-#
-# NOTE: predicting with the neural network model uses compute() not predict()
-####
-iris.cont.eval.nn1 <- compute(iris.cont.model.nn1, iris.cont.test)
-iris.cont.eval.nn1.conMat <- confusionMatrix(
-  as.factor(round(iris.cont.eval.nn1$net.result[,1])), 
-  as.factor(iris.cont.test$species))
-print(iris.cont.eval.nn1.conMat$table)
-str(iris.cont.test)
-
 
 
 matchup.eval.nn1 <- compute(matchup.model.nn1, march.test.matchup.knn)
@@ -976,13 +939,6 @@ matchup.eval.nn1.conMat <- confusionMatrix(
   as.factor(march.test.matchup.cl))
 print(matchup.eval.nn1.conMat$table)
 # Accuracy: 78%, true positive: 83.3%, true negative: 72.2%
-
-
-iris.cont.eval.nn2 <- compute(iris.cont.model.nn2, iris.cont.test)
-iris.cont.eval.nn2.conMat <- confusionMatrix(
-  factor(round(iris.cont.eval.nn2$net.result), levels=c("0", "1")), 
-  as.factor(iris.cont.test$species))
-print(iris.cont.eval.nn2.conMat$table)
 
 str(march.test.matchup)
 matchup.eval.nn2 <- compute(matchup.model.nn2, march.test.matchup.knn)
